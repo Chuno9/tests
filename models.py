@@ -6,7 +6,7 @@ class Usuarios(Base):
 
     id=Column(Integer, primary_key=True, index=True)
     email=Column(String, unique=True)
-    nombreUsu=Column(String)
+    nombre_usu=Column(String)
     nombre=Column(String)
     apellido=Column(String)
     hash_password=Column(String)

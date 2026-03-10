@@ -22,7 +22,7 @@ bcrypt_context=CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer=OAuth2PasswordBearer(tokenUrl="auth/token")
 
 class SolicitudUsuario(BaseModel):
-    nombreUsu:str
+    nombre_usu:str
     email:str
     nombre:str
     apellido:str
@@ -42,17 +42,17 @@ def obtenerDB():
 
 db_dependency=Annotated[Session, Depends(obtenerDB)]
 
-def autenticacion_usuario(nombreUsu:str, contraseña:str, db):
-    usuario=db.query(Usuarios).filter(Usuarios.nombreUsu == nombreUsu).first()
+def autenticacion_usuario(nombre_usu:str, contraseña:str, db):
+    usuario=db.query(Usuarios).filter(Usuarios.nombre_usu == nombre_usu).first()
     if not usuario:
         return False
     if not bcrypt_context.verify(contraseña, usuario.hash_password):
         return False
     return usuario
 
-def crear_token(nombreUsu:str, id_usu:int, rol:str, expires_delta:timedelta):
+def crear_token(nombre_usu:str, id_usu:int, rol:str, expires_delta:timedelta):
 
-    encode = {"sub": nombreUsu, "id": id_usu, "rol": rol}
+    encode = {"sub": nombre_usu, "id": id_usu, "rol": rol}
     expires=datetime.now(timezone.utc) + expires_delta
     encode.update({"exp":expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -60,19 +60,19 @@ def crear_token(nombreUsu:str, id_usu:int, rol:str, expires_delta:timedelta):
 async def obtener_usuario(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload=jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        nombreUsu: str = payload.get("sub")
+        nombre_usu: str = payload.get("sub")
         id_usu: int = payload.get("id")
         rol_usu:str = payload.get("rol")
-        if nombreUsu is None or id_usu is None:
+        if nombre_usu is None or id_usu is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No tienes acceso a estos recursos")
-        return{"nombreUsu": nombreUsu, "id": id_usu, "rol": rol_usu} 
+        return{"nombre_usu": nombre_usu, "id": id_usu, "rol": rol_usu} 
     except:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No tienes acceso a estos recursos")
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def crear_usuario(db: db_dependency, usuario :SolicitudUsuario):
     usuario=Usuarios(
         email=usuario.email,
-        nombreUsu=usuario.nombreUsu,
+        nombre_usu=usuario.nombre_usu,
         nombre=usuario.nombre,
         apellido=usuario.apellido,
         hash_password=bcrypt_context.hash(usuario.contraseña),
@@ -87,5 +87,5 @@ async def access_token(form_data : Annotated[OAuth2PasswordRequestForm, Depends(
     usuario= autenticacion_usuario(form_data.username, form_data.password, db)
     if not usuario:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No tienes acceso a estos recursos")
-    access_token= crear_token(usuario.nombreUsu, usuario.id, usuario.rol, timedelta(minutes=20))
+    access_token= crear_token(usuario.nombre_usu, usuario.id, usuario.rol, timedelta(minutes=20))
     return {"access_token": access_token, "token_type": "bearer"}
