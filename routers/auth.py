@@ -28,6 +28,7 @@ class SolicitudUsuario(BaseModel):
     apellido:str
     contraseña:str
     rol:str
+    tel:str
 
 class Token(BaseModel):
     access_token:str
@@ -77,6 +78,7 @@ async def crear_usuario(db: db_dependency, usuario :SolicitudUsuario):
         apellido=usuario.apellido,
         hash_password=bcrypt_context.hash(usuario.contraseña),
         rol=usuario.rol,
+        tel=usuario.tel,
         activo=True
     )
     db.add(usuario)

@@ -11,7 +11,8 @@ class Usuarios(Base):
     apellido=Column(String)
     hash_password=Column(String)
     activo=Column(Boolean, default=True)
-    rol=Column(String)
+    rol=Column(String)    
+    tel=Column(String)
 
 class Todos(Base):
     __tablename__="todos"
