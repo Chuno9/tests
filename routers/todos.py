@@ -54,7 +54,7 @@ async def actualizarTodo(usuario: user_dependency, db: db_dependency, solicitud:
         raise HTTPException(status_code=401, detail="Autenticacion fallida")
     todo_model=db.query(Todos).filter(Todos.id==todo_id).filter(Todos.dueño_id==usuario.get("id")).first()
     if todo_model is None:
-        raise HTTPException(status_code=404, details="no se encuentra la tarea")
+        raise HTTPException(status_code=404, detail="no se encuentra la tarea")
     todo_model.titulo=solicitud.titulo
     todo_model.descripcion=solicitud.descripcion
     todo_model.prioridad=solicitud.prioridad
