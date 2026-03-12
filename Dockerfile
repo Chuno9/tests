@@ -6,4 +6,4 @@ RUN apt update -y && apt install curl -y
 
 RUN pip install -r requirements.txt 
 
-ENTRYPOINT ["uvicorn","main:app","--host","0.0.0.0"]
+ENTRYPOINT ["pytest"]

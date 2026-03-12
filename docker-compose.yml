@@ -1,12 +1,12 @@
 version: "3"
 services:
-  db:
+  db_tests:
     build:
       context: .
       dockerfile: Dockerfile.postgres
     ports:
       - 5432:5432
-  app:
+  app_tests:
     build:
       context: .
       dockerfile: Dockerfile

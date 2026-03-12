@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-import p4.TodoApp.main2 as main2
+import main2
 from fastapi import status
 
 client=TestClient(main2.app)
